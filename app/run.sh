@@ -34,6 +34,6 @@ echo "Creating container $CONTAINER_NAME..."
 eval "$RUN_COMMAND"
 fi
 }
-start_container "$DB_CONTAINER" "docker run -d --name db --network appnet -e POSTGRES_DB=guestbook -e POSTGRES_USER=guestbook -e POSTGRES_PASSWORD=asd123 -v appvol:/var/lib/postgresql/data postgres:15"
+start_container "$DB_CONTAINER" "docker run -d --name db --network appnet --env-file db.env -v appvol:/var/lib/postgresql/data postgres:15"
 start_container "$CACHE_CONTAINER" "docker run -d --name cache --network appnet redis"
-start_container "$WEB_CONTAINER" "docker run -d --name web --network appnet -e DATABASE_HOST=db -e DATABASE_PORT=5432 -e DATABASE_NAME=guestbook -e DATABASE_USER=guestbook -e DATABASE_PASSWORD=asd123 -e REDIS_HOST=cache -e REDIS_PORT=6379 -p 8080:8080 myapp:v1"
+start_container "$WEB_CONTAINER" "docker run -d --name web --network appnet --env-file web.env -p 8080:8080 myapp:v1"
