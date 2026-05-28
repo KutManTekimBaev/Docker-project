@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Гостевая книга</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 640px; margin: 40px auto; padding: 0 16px; color: #1e1e2e; }
+    h1 { margin-bottom: 4px; }
+    .visits { color: #6c7086; font-size: 14px; margin-bottom: 24px; }
+    form { display: grid; gap: 8px; margin-bottom: 32px; }
+    input, textarea { font: inherit; padding: 8px; border: 1px solid #ccc; border-radius: 6px; }
+    button { font: inherit; padding: 8px 16px; border: 0; border-radius: 6px; background: #1e66f5; color: #fff; cursor: pointer; justify-self: start; }
+    .msg { border-top: 1px solid #eee; padding: 12px 0; }
+    .msg .meta { color: #6c7086; font-size: 13px; }
+    .empty { color: #6c7086; }
+  </style>
+</head>
+<body>
+  <h1>Гостевая книга</h1>
+  {% if visits is not none %}
+    <div class="visits">Просмотров страницы: {{ visits }}</div>
+  {% else %}
+    <div class="visits">Счётчик недоступен (cache down)</div>
+  {% endif %}
+
+  <form method="post" action="/messages">
+    <input name="author" placeholder="Имя" maxlength="50">
+    <textarea name="body" placeholder="Сообщение" rows="3" maxlength="500" required></textarea>
+    <button type="submit">Оставить запись</button>
+  </form>
+
+  {% if messages %}
+    {% for author, body, created_at in messages %}
+      <div class="msg">
+        <div class="meta">{{ author }} — {{ created_at.strftime('%Y-%m-%d %H:%M') }}</div>
+        <div>{{ body }}</div>
+      </div>
+    {% endfor %}
+  {% else %}
+    <p class="empty">Пока пусто. Будь первым.</p>
+  {% endif %}
+</body>
+</html>
