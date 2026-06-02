@@ -1,0 +1,25 @@
+  services:
+    db:
+      image: postgres:16-alpine
+      env_file:
+        - "db.env"
+      volumes: [pgdata:/var/lib/postgresql/data]
+      healthcheck:
+        test: ["CMD-SHELL", "pg_isready -U guestbook"]
+        interval: 5s
+        timeout: 3s
+        retries: 5
+        start_period: 10s
+    chache:
+      image: redis:7-alpine
+    web:
+      build: .
+      ports: ["8080:8080"]
+      env_file:
+        - "web.env"
+      depends_on:
+        db: { condition: service_healthy }
+        chache: { condition: service_started }
+  volumes:
+    pgdata:
+
